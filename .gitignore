@@ -1,0 +1,64 @@
+# Compiled source folders #
+###########################
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Visual Studio #
+#################
+*.suo
+*.user
+*.sln.docstates
+*.vspscc
+*.vssscc
+*.vsp
+*.vspx
+*.psess
+[Tt]est[Rr]esults/
+*.vsmdi
+
+# NuGet #
+#########
+[Pp]ackages/
+!/packages/repositories.config
+!/packages/build/
+!/[Dd]atabase/[Ss]ource/*/[Pp]ackages/
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+*.cfg
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup and temp files #
+#########################
+*~
+~$*
+*.swp
+*.~*
+*.orig
