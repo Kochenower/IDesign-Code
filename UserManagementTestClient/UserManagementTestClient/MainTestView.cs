@@ -68,7 +68,14 @@ namespace UserManagementTestClient
         {
             int iterations = Convert.ToInt32(m_IterationsTextBox.Text);
             int threads = Convert.ToInt32(m_ThreadsTextBox.Text);
-            
+
+            RefreshActivityListView(new Result()
+            {
+                Activity = "Stress Testing Login",
+                Reason = "See Output for result.",
+                IsSuccessful = true
+            });
+
             for (int j = 0; j < threads; j++)
             {
                 Console.WriteLine("Thread: {0}", j);
@@ -83,11 +90,8 @@ namespace UserManagementTestClient
 
                     for (var i = 0; i < iterations; i++)
                     {
-                        //using (TransactionScope scope = new TransactionScope())
-                        //{
                         var result = proxy.Login("a", "a");
-                        //scope.Complete();
-                        //}
+
                         if(!result.IsSuccessful)
                             Console.WriteLine("Thread: {0} Iteration: {1} WasSuccessful: {2}", j, i, result.IsSuccessful);
                     }
@@ -274,6 +278,10 @@ namespace UserManagementTestClient
             try
             {
                 var result = proxy.UpdateAccount("a", password, "FirstName", "LastName", false);
+
+                if (!string.IsNullOrEmpty(password))
+                    result.Reason = "\"" + password + "\" " + result.Reason;
+
                 RefreshActivityListView(result);
 
                 RefreshAccountListView(proxy.GetAccounts());

@@ -75,6 +75,21 @@ namespace UserAccount.Manager
             {
                 Debug.Assert(account != null);
 
+                if (account.FirstName == firstName && account.LastName == lastName && string.IsNullOrEmpty(password))
+                {
+                    Debug.Assert(account.FirstName == firstName);
+                    Debug.Assert(account.LastName == lastName);
+                    Debug.Assert(string.IsNullOrEmpty(password));
+
+                    return new Result()
+                    {
+                        Activity = "Account Update",
+                        IsSuccessful = true,
+                        Reason = "Nothing to update.",
+                        Account = account
+                    };
+                }
+
                 if (!string.IsNullOrEmpty(firstName) && account.FirstName != firstName)
                 {
                     Debug.Assert(!string.IsNullOrEmpty(firstName));
