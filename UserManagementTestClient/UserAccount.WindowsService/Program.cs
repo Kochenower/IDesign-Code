@@ -11,6 +11,7 @@ namespace UserAccount.WindowsService
             {
                 const string name = "UserAccountManager";
                 const string description = "User Account Manager";
+
                 var host = HostFactory.New(configuration =>
                 {
                     configuration.Service<UserAccountServiceHost>(callback =>
@@ -24,6 +25,7 @@ namespace UserAccount.WindowsService
                     configuration.SetDescription(description);
                     configuration.RunAsLocalService();
                 });
+
                 host.Run();
             }
             catch (Exception ex)

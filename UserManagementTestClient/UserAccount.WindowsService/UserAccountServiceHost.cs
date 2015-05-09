@@ -42,12 +42,14 @@ namespace UserAccount.WindowsService
             try
             {
                 if (_Service != null)
+                {
                     if (_Service.State == CommunicationState.Opened)
                     {
                         _Service.Close();
                         if (_Service.State == CommunicationState.Closed)
                             Console.WriteLine("Service Stopped.");
                     }
+                }
             }
             catch (Exception e)
             {

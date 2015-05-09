@@ -39,17 +39,44 @@ namespace UserAccount.Engine
             return Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$");
         }
 
+        private Result Login(Account account, string password)
+        {
+            Result result;
+
+            if (account.Password.LastOrDefault() == password)
+            {
+                account.LoginAttempts = 0;
+                result = _UserAccountAccessor.Value.UpdateAccount(account);
+
+                if (result.IsSuccessful)
+                {
+                    result.Activity = "Login";
+                }
+            }
+            else
+            {
+                account.LoginAttempts++;
+                result = _UserAccountAccessor.Value.UpdateAccount(account);
+
+                if (result.IsSuccessful)
+                {
+                    result.IsSuccessful = false;
+                    result.Account = account;
+                    result.Reason = "Incorrect Password.";
+                }
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Service Methods
 
-        [OperationBehavior]
         public Result ValidatePassword(Account account, string password)
         {
             if (string.IsNullOrEmpty(password))
             {
-                Debug.Assert(string.IsNullOrEmpty(password));
-
                 return new Result()
                 {
                     IsSuccessful = false,
@@ -61,8 +88,6 @@ namespace UserAccount.Engine
 
             if (account == null)
             {
-                Debug.Assert(account == null);
-
                 return new Result()
                 {
                     IsSuccessful = false,
@@ -103,15 +128,12 @@ namespace UserAccount.Engine
             };
         }
 
-        [OperationBehavior]
         public Result ValidateNewUserAccount(string userName, string password)
         {
             var result = new Result { Activity = "Validate New User Account" };
 
             if (string.IsNullOrEmpty(userName))
             {
-                Debug.Assert(string.IsNullOrEmpty(userName));
-
                 return new Result()
                 {
                     IsSuccessful = false,
@@ -121,8 +143,6 @@ namespace UserAccount.Engine
 
             if (string.IsNullOrEmpty(password))
             {
-                Debug.Assert(string.IsNullOrEmpty(password));
-
                 return new Result()
                 {
                     IsSuccessful = false,
@@ -155,7 +175,6 @@ namespace UserAccount.Engine
             return result;
         }
 
-        [OperationBehavior]
         public Result AuthenticateAccount(string userName, string password)
         {
             var result = new Result {Activity = "Authentication"};
@@ -184,66 +203,45 @@ namespace UserAccount.Engine
             var account = _UserAccountAccessor.Value.GetAccounts().FirstOrDefault(x =>
                 x.UserName == userName);
 
-            if (account != null)
-            {
-                Debug.Assert(account != null);
-
-                if (account.IsLocked)
-                {
-                    result.IsSuccessful = false;
-                    result.Account = account;
-                    result.Reason = "User Account is Locked.";
-                }
-                else
-                {
-                    if (account.LoginAttempts < 5)
-                    {
-                        if (account.Password.LastOrDefault() == password)
-                        {
-                            account.LoginAttempts = 0;
-                            result = _UserAccountAccessor.Value.UpdateAccount(account);
-
-                            if (result.IsSuccessful)
-                            {
-                                result.Activity = "Login";
-                            }
-                        }
-                        else
-                        {
-                            account.LoginAttempts++;
-                            result = _UserAccountAccessor.Value.UpdateAccount(account);
-
-                            if (result.IsSuccessful)
-                            {
-                                result.IsSuccessful = false;
-                                result.Account = account;
-                                result.Reason = "Incorrect Password.";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        account.IsLocked = true;
-                        result = _UserAccountAccessor.Value.UpdateAccount(account);
-
-                        if (result.IsSuccessful)
-                        {
-                            result.IsSuccessful = false;
-                            result.Account = account;
-                            result.Reason = "User Account is Locked.";
-                        }
-                    }
-                }
-            }
-            else
+            if (account == null)
             {
                 result.IsSuccessful = false;
                 result.Reason = "User Account was not found.";
+
+                return result;
+            }
+
+            Debug.Assert(account != null);
+
+            if (account.IsLocked)
+            {
+                result.IsSuccessful = false;
+                result.Account = account;
+                result.Reason = "User Account is Locked.";
+            }
+            else
+            {
+                if (account.LoginAttempts < 5)
+                {
+                    result = Login(account, password);
+                }
+                else
+                {
+                    account.IsLocked = true;
+                    result = _UserAccountAccessor.Value.UpdateAccount(account);
+
+                    if (result.IsSuccessful)
+                    {
+                        result.IsSuccessful = false;
+                        result.Account = account;
+                        result.Reason = "User Account is Locked.";
+                    }
+                }
             }
 
             return result;
         }
-
+      
         #endregion
     }
 }

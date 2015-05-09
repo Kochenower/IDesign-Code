@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -29,8 +28,8 @@ namespace UserAccount.XmlAccountStore
             // If the XML document has been altered with unknown 
             // nodes or attributes, handles them with the 
             // UnknownNode and UnknownAttribute events.
-            _Serializer.UnknownNode += serializer_UnknownNode;
-            _Serializer.UnknownAttribute += serializer_UnknownAttribute;
+            _Serializer.UnknownNode += SerializerUnknownNode;
+            _Serializer.UnknownAttribute += SerializerUnknownAttribute;
 
             if (!File.Exists(_FileName))
                 XmlInitialize(_FileName);
@@ -63,12 +62,12 @@ namespace UserAccount.XmlAccountStore
             }
         }
 
-        protected void serializer_UnknownNode(object sender, XmlNodeEventArgs e)
+        protected void SerializerUnknownNode(object sender, XmlNodeEventArgs e)
         {
             Console.WriteLine("Unknown Node:" + e.Name + "\t" + e.Text);
         }
 
-        protected void serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)
+        protected void SerializerUnknownAttribute(object sender, XmlAttributeEventArgs e)
         {
             XmlAttribute attr = e.Attr;
             Console.WriteLine("Unknown attribute " +
@@ -81,14 +80,10 @@ namespace UserAccount.XmlAccountStore
 
         public Account[] GetAccounts()
         {
-            Account[] accounts;
-
-            using (FileStream reader = new FileStream(_FileName, FileMode.Open))
+            using (var reader = new FileStream(_FileName, FileMode.Open))
             {
-                accounts = _Serializer.Deserialize(reader) as Account[];
+                return _Serializer.Deserialize(reader) as Account[];
             }
-
-            return accounts;
         }
 
         public Result CreateAccount(Account account)
@@ -119,9 +114,6 @@ namespace UserAccount.XmlAccountStore
             };
             if (accounts.Count > 0 && accounts.All(x => x != null))
             {
-                Debug.Assert(accounts.Count > 0);
-                Debug.Assert(accounts.All(x => x != null));
-
                 if (deleteAccount)
                 {
                     accounts.Remove(accounts.FirstOrDefault(x => x.UserName == account.UserName));

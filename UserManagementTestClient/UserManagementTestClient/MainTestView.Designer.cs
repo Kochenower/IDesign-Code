@@ -165,7 +165,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
             // editToolStripMenuItem
             // 
@@ -185,14 +185,14 @@
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
             this.loginToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.loginToolStripMenuItem.Text = "&Login";
-            this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
+            this.loginToolStripMenuItem.Click += new System.EventHandler(this.LoginToolStripMenuItemClick);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.refreshToolStripMenuItem.Text = "&Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItemClick);
             // 
             // toolStripSeparator2
             // 
@@ -204,14 +204,14 @@
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.addToolStripMenuItem.Text = "&Add";
-            this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
+            this.addToolStripMenuItem.Click += new System.EventHandler(this.AddToolStripMenuItemClick);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "&Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteToolStripMenuItemClick);
             // 
             // toolStripSeparator1
             // 
@@ -258,7 +258,7 @@
             this.btnStressTest.TabIndex = 14;
             this.btnStressTest.Text = "Go!";
             this.btnStressTest.UseVisualStyleBackColor = true;
-            this.btnStressTest.Click += new System.EventHandler(this.btnStressTest_Click);
+            this.btnStressTest.Click += new System.EventHandler(this.StressTestClick);
             // 
             // groupBox2
             // 
@@ -285,7 +285,7 @@
             this.btnDeleteAccount.TabIndex = 15;
             this.btnDeleteAccount.Text = "Delete Account";
             this.btnDeleteAccount.UseVisualStyleBackColor = true;
-            this.btnDeleteAccount.Click += new System.EventHandler(this.btnDeleteAccount_Click);
+            this.btnDeleteAccount.Click += new System.EventHandler(this.DeleteAccountClick);
             // 
             // btnCreateAccount
             // 
@@ -295,7 +295,7 @@
             this.btnCreateAccount.TabIndex = 14;
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
-            this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
+            this.btnCreateAccount.Click += new System.EventHandler(this.CreateAccountClick);
             // 
             // btnGetUsers
             // 
@@ -305,7 +305,7 @@
             this.btnGetUsers.TabIndex = 13;
             this.btnGetUsers.Text = "Get Accounts";
             this.btnGetUsers.UseVisualStyleBackColor = true;
-            this.btnGetUsers.Click += new System.EventHandler(this.btnGetUsers_Click);
+            this.btnGetUsers.Click += new System.EventHandler(this.GetUsersClick);
             // 
             // btnPassword
             // 
@@ -315,7 +315,7 @@
             this.btnPassword.TabIndex = 12;
             this.btnPassword.Text = "Password Strength";
             this.btnPassword.UseVisualStyleBackColor = true;
-            this.btnPassword.Click += new System.EventHandler(this.btnPassword_Click);
+            this.btnPassword.Click += new System.EventHandler(this.PasswordClick);
             // 
             // btnAccountUnlock
             // 
@@ -325,7 +325,7 @@
             this.btnAccountUnlock.TabIndex = 11;
             this.btnAccountUnlock.Text = "Account Unlock";
             this.btnAccountUnlock.UseVisualStyleBackColor = true;
-            this.btnAccountUnlock.Click += new System.EventHandler(this.btnAccountUnlock_Click);
+            this.btnAccountUnlock.Click += new System.EventHandler(this.AccountUnlockClick);
             // 
             // btnAccountLock
             // 
@@ -335,7 +335,7 @@
             this.btnAccountLock.TabIndex = 10;
             this.btnAccountLock.Text = "Account Lock";
             this.btnAccountLock.UseVisualStyleBackColor = true;
-            this.btnAccountLock.Click += new System.EventHandler(this.btnAccountLock_Click);
+            this.btnAccountLock.Click += new System.EventHandler(this.AccountLockClick);
             // 
             // btnInvalidCredentials
             // 
@@ -345,7 +345,7 @@
             this.btnInvalidCredentials.TabIndex = 9;
             this.btnInvalidCredentials.Text = "Invalid Credentials";
             this.btnInvalidCredentials.UseVisualStyleBackColor = true;
-            this.btnInvalidCredentials.Click += new System.EventHandler(this.btnInvalidCredentials_Click);
+            this.btnInvalidCredentials.Click += new System.EventHandler(this.InvalidCredentialsClick);
             // 
             // btnLogin
             // 
@@ -355,7 +355,7 @@
             this.btnLogin.TabIndex = 8;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            this.btnLogin.Click += new System.EventHandler(this.LoginClick);
             // 
             // _ActivityListView
             // 

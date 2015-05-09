@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.Security.Cryptography;
-using System.Windows.Forms;
 using System.ServiceModel;
 using System.Threading;
+using System.Windows.Forms;
 using UserAccount.Contracts;
 
 namespace UserManagementTestClient
 {
     public partial class MainTestView : Form
     {
-         #region Fields
+        #region Fields
+
         private readonly ChannelFactory<IUserAccountManager> _Factory;
+
         #endregion
 
         #region Constructor
@@ -26,7 +26,7 @@ namespace UserManagementTestClient
         }
         #endregion
 
-        #region Private Methods
+        #region Helper Methods
 
         private void RefreshAccountListView(IEnumerable<Account> accounts)
         {
@@ -58,13 +58,30 @@ namespace UserManagementTestClient
                 item.Tag = result;
         }
 
+        private void InvalidPasswords(string password)
+        {
+            var proxy = _Factory.CreateChannel();
+
+            Debug.Assert(proxy != null);
+
+            var result = proxy.UpdateAccount("a", password, "FirstName", "LastName");
+
+            if (!string.IsNullOrEmpty(password))
+                result.Reason = "\"" + password + "\" " + result.Reason;
+
+            RefreshActivityListView(result);
+
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
+        }
+
         #endregion
 
         #region Button Methods
 
         #region Stress Test
 
-        private void btnStressTest_Click(object sender, EventArgs e)
+        private void StressTestClick(object sender, EventArgs e)
         {
             int iterations = Convert.ToInt32(m_IterationsTextBox.Text);
             int threads = Convert.ToInt32(m_ThreadsTextBox.Text);
@@ -110,93 +127,65 @@ namespace UserManagementTestClient
 
         #endregion
 
-        private void btnGetUsers_Click(object sender, EventArgs e)
+        private void GetUsersClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
 
-                RefreshActivityListView(new Result()
-                {
-                    Activity = "Get Accounts",
-                    IsSuccessful = true
-                });
-            }
-            catch (Exception ex)
+            RefreshActivityListView(new Result()
             {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+                Activity = "Get Accounts",
+                IsSuccessful = true
+            });
         }
 
-        private void btnCreateAccount_Click(object sender, EventArgs e)
+        private void CreateAccountClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.CreateAccount("user"+ new Random().Next(), "12345 Bb", "FirstName1", "LastName1");
+            var result = proxy.CreateAccount("user" + new Random().Next(), "12345 Bb", "FirstName1", "LastName1");
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private void LoginClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.Login("a", "a");
+            var result = proxy.Login("a", "a");
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void btnInvalidCredentials_Click(object sender, EventArgs e)
+        private void InvalidCredentialsClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.Login("a", "b");
+            var result = proxy.Login("a", "b");
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void btnAccountLock_Click(object sender, EventArgs e)
+        private void AccountLockClick(object sender, EventArgs e)
         {
             if (_UsersListView.SelectedItems.Count == 0)
                 return;
@@ -205,29 +194,22 @@ namespace UserManagementTestClient
             if (account == null)
                 return;
 
-            if(account.IsLocked)
+            if (account.IsLocked)
                 return;
 
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.UpdateAccount(account.UserName, "", account.FirstName, account.LastName, true);
+            var result = proxy.UpdateAccount(account.UserName, "", account.FirstName, account.LastName, true);
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void btnAccountUnlock_Click(object sender, EventArgs e)
+        private void AccountUnlockClick(object sender, EventArgs e)
         {
             if (_UsersListView.SelectedItems.Count == 0)
                 return;
@@ -236,29 +218,23 @@ namespace UserManagementTestClient
             if (account == null)
                 return;
 
-            if (!account.IsLocked) 
+            if (!account.IsLocked)
                 return;
 
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.UpdateAccount(account.UserName, "", account.FirstName, account.LastName, false);
 
-                RefreshActivityListView(result);
+            var result = proxy.UpdateAccount(account.UserName, "", account.FirstName, account.LastName, false);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshActivityListView(result);
+
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void btnPassword_Click(object sender, EventArgs e)
+        private void PasswordClick(object sender, EventArgs e)
         {
                 InvalidPasswords("123B $b");
                 InvalidPasswords("12345 $b");
@@ -269,31 +245,7 @@ namespace UserManagementTestClient
                 InvalidPasswords("");
         }
 
-        private void InvalidPasswords(string password)
-        {
-            var proxy = _Factory.CreateChannel();
-
-            Debug.Assert(proxy != null);
-
-            try
-            {
-                var result = proxy.UpdateAccount("a", password, "FirstName", "LastName", false);
-
-                if (!string.IsNullOrEmpty(password))
-                    result.Reason = "\"" + password + "\" " + result.Reason;
-
-                RefreshActivityListView(result);
-
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
-        }
-
-        private void btnDeleteAccount_Click(object sender, EventArgs e)
+        private void DeleteAccountClick(object sender, EventArgs e)
         {
             if (_UsersListView.SelectedItems.Count == 0)
                 return;
@@ -306,26 +258,19 @@ namespace UserManagementTestClient
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.DeleteAccount(account.UserName);
+            var result = proxy.DeleteAccount(account.UserName);
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
         #endregion
 
         #region ToolBar Methods
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RefreshToolStripMenuItemClick(object sender, EventArgs e)
         {
             _UsersListView.Items.Clear(); // show that the ListView was cleared
             _UsersListView.Update();
@@ -338,48 +283,34 @@ namespace UserManagementTestClient
             (proxy as ICommunicationObject).Close();
         }
 
-        private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoginToolStripMenuItemClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.Login("a", "a");
+            var result = proxy.Login("a", "a");
 
-                RefreshActivityListView(result);
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshActivityListView(result);
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AddToolStripMenuItemClick(object sender, EventArgs e)
         {
             var proxy = _Factory.CreateChannel();
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.CreateAccount("user" + new Random().Next(), "12345 Bb", "FirstName1", "LastName1");
+            var result = proxy.CreateAccount("user" + new Random().Next(), "12345 Bb", "FirstName1", "LastName1");
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DeleteToolStripMenuItemClick(object sender, EventArgs e)
         {
             if (_UsersListView.SelectedItems.Count == 0)
                 return;
@@ -392,22 +323,15 @@ namespace UserManagementTestClient
 
             Debug.Assert(proxy != null);
 
-            try
-            {
-                var result = proxy.DeleteAccount(account.UserName);
+            var result = proxy.DeleteAccount(account.UserName);
 
-                RefreshActivityListView(result);
+            RefreshActivityListView(result);
 
-                RefreshAccountListView(proxy.GetAccounts());
-                (proxy as ICommunicationObject).Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: {0}", ex.Message);
-            }
+            RefreshAccountListView(proxy.GetAccounts());
+            (proxy as ICommunicationObject).Close();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
         {
             Close();
         }

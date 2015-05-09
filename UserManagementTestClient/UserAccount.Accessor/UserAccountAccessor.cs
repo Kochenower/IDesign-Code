@@ -21,7 +21,6 @@ namespace UserAccount.Accessor
         private readonly Lazy<XmlAccountStoreResource> _XmlAccountStore = new Lazy<XmlAccountStoreResource>(() =>
         {
             Debug.Assert(!string.IsNullOrEmpty(_FileName));
-            Debug.Assert(_SyncObject != null);
 
             lock (_SyncObject)
             {
@@ -33,10 +32,8 @@ namespace UserAccount.Accessor
 
         #region Methods
 
-        [OperationBehavior]
         public Account[] GetAccounts()
         {
-            Debug.Assert(_SyncObject != null);
             Debug.Assert(_XmlAccountStore.Value != null && _XmlAccountStore.IsValueCreated);
 
             lock (_SyncObject)
@@ -45,10 +42,8 @@ namespace UserAccount.Accessor
             }
         }
 
-        [OperationBehavior]
         public Result CreateAccount(Account account)
         {
-            Debug.Assert(_SyncObject != null);
             Debug.Assert(_XmlAccountStore.Value != null && _XmlAccountStore.IsValueCreated);
             Debug.Assert(account != null);
 
@@ -58,10 +53,8 @@ namespace UserAccount.Accessor
             }         
         }
 
-        [OperationBehavior]
         public Result UpdateAccount(Account account, bool deleteAccount)
         {
-            Debug.Assert(_SyncObject != null);
             Debug.Assert(_XmlAccountStore.Value != null && _XmlAccountStore.IsValueCreated);
             Debug.Assert(account != null);
 
